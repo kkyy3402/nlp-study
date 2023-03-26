@@ -1,0 +1,1 @@
+> python3 train.py --model_fn mode.pth --gpu_id -1 --batch_size 512 --n_epochs 20

@@ -6,9 +6,10 @@ import torch.optim as optim
 
 from model import ImageClassifier
 from trainer import Trainer
-from utils import load_mnist
+from utils import show_image, load_mnist, load_fashion_mnist
 
-def define_argparser():
+
+def define_argument_parser():
     p = argparse.ArgumentParser()
 
     p.add_argument('--model_fn', required=True)
@@ -29,7 +30,9 @@ def main(config):
     # Set device based on user defined configuration.
     device = torch.device('cpu') if config.gpu_id < 0 else torch.device('cuda:%d' % config.gpu_id)
 
-    x, y = load_mnist(is_train=True)
+    # x, y = load_mnist(is_train=True, flatten=False)
+    x, y = load_fashion_mnist(is_train=True)
+
     # Reshape tensor to chunk of 1-d vectors.
     x = x.view(x.size(0), -1)
 
@@ -52,7 +55,7 @@ def main(config):
     print("Train:", x[0].shape, y[0].shape)
     print("Valid:", x[1].shape, y[1].shape)
 
-    model = ImageClassifier(28**2, 10).to(device)
+    model = ImageClassifier(28 ** 2, 10).to(device)
     optimizer = optim.Adam(model.parameters())
     crit = nn.NLLLoss()
 
@@ -66,6 +69,7 @@ def main(config):
         'config': config,
     }, config.model_fn)
 
+
 if __name__ == '__main__':
-    config = define_argparser()
+    config = define_argument_parser()
     main(config)
